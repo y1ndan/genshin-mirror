@@ -2,13 +2,14 @@ import { GetterTree, ActionTree, MutationTree } from "vuex";
 import { nanoid } from "nanoid";
 import jwt from "jsonwebtoken";
 import { vuexPersistenceInstance } from "~/plugins/vuex-persist";
-import type { IArtifact } from "~/modules/core";
+import type { IArtifact, IArtifactType } from "~/modules/core";
 
 const initialState = {
   user: "",
   auth: "",
   travelerGender: 0,
   artifacts: [] as IArtifact[],
+  artifactTypes: {} as { [id: number]: IArtifactType },
   artifactsHash: "",
 };
 type AppState = typeof initialState;
@@ -28,6 +29,9 @@ export const mutations: MutationTree<AppState> = {
   UPDATE_ARTIFACTS(state, { v, hash }) {
     state.artifacts = v;
     state.artifactsHash = hash;
+  },
+  UPDATE_ARTIFACTS_TYPES(state, v) {
+    state.artifactTypes = v;
   },
 };
 
@@ -61,20 +65,17 @@ export const actions: ActionTree<AppState, {}> = {
   setTravelerGender({ commit }, v) {
     commit("UPDATE_TRAVELER_GENDER", v);
   },
-  // have replaced by vuex-persist
-  // nuxtServerInit({ commit, state } /*, { req } */) {
-  //   if (!state.auth) return;
-  //   // logout when state
-  //   const res = this.$axios.get("/api/user/check", { headers: { Authorization: state.auth } }).catch(() => {});
-  //   if (!res) {
-  //     commit("setUser", "");
-  //     commit("setAuth", "");
-  //   }
-  // },
+  // load content
+  async nuxtServerInit({ commit } /*, { req } */) {
+    const res = (await (this.$content as any)(this.$i18n.locale, "relic").fetch().catch(console.error)) as IArtifactType[];
+    const idmap = res.reduce<{ [id: number]: IArtifactType }>((r, v) => (r[v.id] = v) && r, {});
+    commit("UPDATE_ARTIFACTS_TYPES", idmap);
+  },
 };
 export const getters: GetterTree<AppState, {}> = {
   travelerGender: ({ travelerGender }) => travelerGender,
   username: ({ user }) => user,
   artifacts: ({ artifacts }) => artifacts,
+  artifactTypes: ({ artifactTypes }) => artifactTypes,
   artifactsHash: ({ artifactsHash }) => artifactsHash,
 };

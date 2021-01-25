@@ -78,13 +78,12 @@ export default class Signup extends Vue {
   }
 
   get confirmPasswordRules() {
-    return [
-      //
-      (v: string) => v === this.password || this.$t("ui.passwordNotMatch"),
-    ];
+    return [(v: string) => v === this.password || this.$t("ui.passwordNotMatch")];
   }
 
   async postSignUp() {
+    this.email = this.email.trim();
+    this.username = this.username.trim();
     if (!this.email || !this.password) return;
     this.loading = true;
     const res = await this.$axios

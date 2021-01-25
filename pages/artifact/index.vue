@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto">
-    <nuxt-link to="/doc/artifact">文档</nuxt-link>
+    <!-- <nuxt-link to="/doc/artifact">文档</nuxt-link> -->
     <v-list>
       <v-list-item v-for="item in list" :key="item.id">
         <v-list-item-title>{{ item.localeName }}</v-list-item-title>
@@ -18,11 +18,7 @@ import { IArtifact, IArtifactType } from "~/modules/core";
   // server
   async asyncData({ $content, app }) {
     const rst: Partial<Page> = { list: null };
-    const res = (await $content(app.i18n.locale, "relic")
-      .only(["id", "name", "localeName", "region", "element", "gender", "rarity", "weapon"])
-      .sortBy("region", "asc")
-      .fetch()
-      .catch()) as any;
+    const res = (await $content(app.i18n.locale, "relic").fetch().catch(console.error)) as any;
     rst.list = res;
     return rst;
   },

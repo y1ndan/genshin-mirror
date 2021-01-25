@@ -25,11 +25,11 @@
           </v-subheader>
           <!-- 内容 -->
           <v-list-item v-if="item.id" :key="item.id">
-            <v-list-item-action>
+            <div class="enemy-linehead">
               <v-list-item-title>
                 <v-avatar color="grey" />
               </v-list-item-title>
-            </v-list-item-action>
+            </div>
 
             <nuxt-link :to="'enemy/' + item.id" class="nolink">
               <v-list-item-content>
@@ -100,3 +100,11 @@ export default class Page extends Vue {
   }
 }
 </script>
+
+<style lang="less">
+.enemy-linehead {
+  text-align: center;
+  width: 80px;
+  flex: none;
+}
+</style>
